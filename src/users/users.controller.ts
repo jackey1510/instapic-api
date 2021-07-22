@@ -33,6 +33,7 @@ export class UsersController {
   @Post('register')
   @ApiCreatedResponse()
   register(@Body() createUserDto: createUserDto) {
+    console.log(createUserDto);
     return this.userService.createOne(createUserDto);
   }
 }

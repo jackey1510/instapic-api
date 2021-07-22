@@ -29,6 +29,8 @@ export class UsersService {
         { email: createUserDto.email.toLowerCase() },
       ],
     });
+    console.log(createUserDto);
+    console.log(existingUser);
     if (existingUser) {
       throw new BadRequestException({ error: 'Username or email is taken' });
     }
@@ -45,18 +47,20 @@ export class UsersService {
       .has()
       .not()
       .spaces(); // Should not have spaces
-    if (!passwordSchema.validate(createUserDto.password))
+    if (!passwordSchema.validate(createUserDto.password)) {
+      console.log('invalid');
       throw new BadRequestException(
         'password is invalid',
         'must have at least 8 characters, less than 100 characters, 1 uppercase letter, 1 lowercase letter and no spaces',
       );
+    }
     const hashedPassword = await argon2.hash(createUserDto.password);
     const newUser = this.userRepository.create({
       username: createUserDto.username.toLowerCase(),
       email: createUserDto.email.toLowerCase(),
       password: hashedPassword,
     });
-
+    console.log(newUser);
     await this.userRepository.save(newUser);
 
     return true;
