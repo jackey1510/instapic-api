@@ -1,7 +1,8 @@
+import { registerResponseDto, userError } from './dtos/register-response.dto';
 import { createUserDto } from './dtos/create-user.dto';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from './users.entity';
+import { User } from './entities/users.entity';
 import argon2 from 'argon2';
 import pwValidator from 'password-validator';
 
@@ -22,17 +23,55 @@ export class UsersService {
       where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
     });
   }
-  async createOne(createUserDto: createUserDto): Promise<boolean> {
+  async createOne(createUserDto: createUserDto): Promise<registerResponseDto> {
+    const { username, password, email } = createUserDto;
+
     const existingUser = await this.userRepository.findOne({
       where: [
-        { username: createUserDto.username.toLowerCase() },
-        { email: createUserDto.email.toLowerCase() },
+        { username: username.toLowerCase() },
+        { email: email.toLowerCase() },
       ],
     });
-    console.log(createUserDto);
-    console.log(existingUser);
+
     if (existingUser) {
-      throw new BadRequestException({ error: 'Username or email is taken' });
+      console.log('User exist', existingUser);
+      throw new BadRequestException([
+        {
+          field: 'username',
+          error: 'Username or email is taken',
+        },
+        {
+          field: 'email',
+          error: 'Username or email is taken',
+        },
+      ]);
+    }
+
+    this.validateRegister(createUserDto);
+
+    const hashedPassword = await argon2.hash(password);
+    const newUser = this.userRepository.create({
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
+      password: hashedPassword,
+    });
+    console.log(newUser);
+    await this.userRepository.save(newUser);
+
+    return { user: newUser };
+  }
+
+  private validateRegister(user: createUserDto) {
+    const { username, email, password } = user;
+    const errors: userError[] = [];
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!username) {
+      errors.push({ field: 'username', error: 'Username cannot be empty' });
+    }
+    if (!emailRegex.test(email)) {
+      errors.push({ field: 'email', error: 'Email is not valid' });
+      // throw new BadRequestException();
     }
     const passwordSchema = new pwValidator();
     passwordSchema
@@ -47,22 +86,16 @@ export class UsersService {
       .has()
       .not()
       .spaces(); // Should not have spaces
-    if (!passwordSchema.validate(createUserDto.password)) {
-      console.log('invalid');
-      throw new BadRequestException(
-        'password is invalid',
-        'must have at least 8 characters, less than 100 characters, 1 uppercase letter, 1 lowercase letter and no spaces',
-      );
+    if (!passwordSchema.validate(password)) {
+      errors.push({
+        field: 'password',
+        error:
+          'Password must have at least 8 characters, less than 100 characters, 1 uppercase letter, 1 lowercase letter and no spaces',
+      });
     }
-    const hashedPassword = await argon2.hash(createUserDto.password);
-    const newUser = this.userRepository.create({
-      username: createUserDto.username.toLowerCase(),
-      email: createUserDto.email.toLowerCase(),
-      password: hashedPassword,
-    });
-    console.log(newUser);
-    await this.userRepository.save(newUser);
 
-    return true;
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
   }
 }

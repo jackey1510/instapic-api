@@ -1,3 +1,6 @@
+import { DatabaseModule } from 'src/database/database.module';
+import { refreshTokenProviders } from './refresh-token.provider';
+import { accessTokenExpireTime } from './../constants';
 import { AuthController } from './auth.controller';
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -11,13 +14,19 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
+    DatabaseModule,
     JwtModule.register({
       secret: process.env.ACCESS_TOKEN_SECRET,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: accessTokenExpireTime },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ...refreshTokenProviders,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

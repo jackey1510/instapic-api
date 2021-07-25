@@ -5,9 +5,16 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { APP_GUARD } from '@nestjs/core';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, ConfigModule.forRoot(), DatabaseModule],
+  imports: [
+    AuthModule,
+    UsersModule,
+    ConfigModule.forRoot(),
+    DatabaseModule,
+    PostsModule,
+  ],
   controllers: [],
   providers: [
     {

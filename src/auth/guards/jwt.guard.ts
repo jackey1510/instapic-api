@@ -4,19 +4,23 @@ import {
   ExecutionContext,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-
+// import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../auth.decorator';
+// import { TokenExpiredError, verify, sign } from 'jsonwebtoken';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
+  // private refreshAccessToken(refreshToken: string) {
+  //   const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  //   console.log(payload);
+  //   return sign(payload, process.env.ACCESS_TOKEN_SECRET);
+  // }
 
-  handleRequest(err, user, _info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    console.log(user, _info);
+  handleRequest(err, user, _info: Error) {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }

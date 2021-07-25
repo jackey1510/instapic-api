@@ -1,0 +1,5 @@
+{
+  "type": "postgres",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "migrations": ["dist/migrations/*.js"]
+}

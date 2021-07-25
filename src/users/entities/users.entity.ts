@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Post } from './../../posts/entities/post.entity';
+import { RefreshToken } from '../../auth/entities/refresh-token.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -6,7 +8,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class User {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
-  id!: number;
+  id!: string;
 
   @ApiProperty()
   @IsEmail()
@@ -25,4 +27,10 @@ export class User {
   @ApiProperty()
   @Column({ length: 300, nullable: true })
   bio: string;
+
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  refreshTokens: Promise<RefreshToken[]>;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Promise<Post[]>;
 }

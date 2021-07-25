@@ -1,14 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { RefreshToken } from './entities/refresh-token.entity';
+import { loginDto } from './dtos/login.dto';
+import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import {
+  Injectable,
+  UnauthorizedException,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import argon2 from 'argon2';
-import { User } from '../users/users.entity';
+import { refreshTokenExpireTime } from '../constants';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    @Inject('REFRESH_TOKEN_REPOSITORY')
+    private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 
   async validateUser(usernameOrEmail: string, password: string): Promise<any> {
@@ -25,10 +37,88 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
+  async login(loginDto: loginDto) {
+    const user = await this.usersService.findOneByUsernameOrEmail(
+      loginDto.usernameOrEmail,
+    );
+    if (!user)
+      throw new NotFoundException([
+        {
+          field: 'usernameOrEmail',
+          error: 'Username or email not found',
+        },
+      ]);
+    const correctPassword = await argon2.verify(
+      user.password,
+      loginDto.password,
+    );
+    console.log(correctPassword);
+    if (!correctPassword) {
+      throw new BadRequestException([
+        {
+          field: 'password',
+          error: 'password is incorrect',
+        },
+      ]);
+    }
     const payload = { username: user.username, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
+      refreshToken: await this.genRefreshToken(payload),
     };
   }
+
+  async refreshAccessToken(refreshToken: string): Promise<string> {
+    const tokenInDB = await this.refreshTokenRepository.findOne({
+      token: refreshToken,
+    });
+    if (!tokenInDB) {
+      throw new UnauthorizedException([
+        {
+          field: 'refresh token',
+          error: 'token is invalid',
+        },
+      ]);
+    }
+
+    const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    if (!payload) {
+      throw new UnauthorizedException([
+        {
+          field: 'refresh token',
+          error: 'token is invalid',
+        },
+      ]);
+    }
+
+    return this.jwtService.sign({
+      username: (payload as userPayload).username,
+      sub: payload.sub,
+    });
+  }
+
+  private async genRefreshToken(payload: userPayload) {
+    const token = sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: refreshTokenExpireTime,
+    });
+    const exp = new Date();
+    exp.setDate(exp.getDate() + 30);
+    await this.refreshTokenRepository.insert({
+      token,
+      userId: payload.sub,
+      exp,
+    });
+    return token;
+  }
+
+  async revokeRefreshToken(refreshToken: string, userId: string) {
+    return await this.refreshTokenRepository.delete({
+      token: refreshToken,
+      userId,
+    });
+  }
+}
+
+interface userPayload extends JwtPayload {
+  username: string;
 }
