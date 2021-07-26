@@ -51,7 +51,6 @@ export class AuthService {
       user.password,
       loginDto.password,
     );
-    console.log(correctPassword);
     if (!correctPassword) {
       throw new BadRequestException([
         {
@@ -81,21 +80,26 @@ export class AuthService {
       return '';
     }
 
-    const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    if (!payload) {
+    try {
+      const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      if (!payload) {
+        return '';
+      }
+      return this.jwtService.sign({
+        username: (payload as userPayload).username,
+        sub: payload.sub,
+      });
+    } catch (err) {
+      console.log(err);
       return '';
-      //   throw new UnauthorizedException([
-      //     {
-      //       field: 'refresh token',
-      //       error: 'token is invalid',
-      //     },
-      //   ]);
     }
 
-    return this.jwtService.sign({
-      username: (payload as userPayload).username,
-      sub: payload.sub,
-    });
+    //   throw new UnauthorizedException([
+    //     {
+    //       field: 'refresh token',
+    //       error: 'token is invalid',
+    //     },
+    //   ]);
   }
 
   private async genRefreshToken(payload: userPayload) {
