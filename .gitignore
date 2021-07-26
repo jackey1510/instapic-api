@@ -37,5 +37,9 @@ lerna-debug.log*
 
 .env.production
 
+ormconfig.json
+
+gcp_keys.json
+
 
 

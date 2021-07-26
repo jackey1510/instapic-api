@@ -25,5 +25,8 @@ export class Post {
   text: string;
 
   @Column()
-  photo_url: string;
+  photoUrl: string;
+
+  @Column()
+  fileName: string;
 }

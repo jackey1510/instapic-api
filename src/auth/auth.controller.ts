@@ -1,13 +1,5 @@
 import { MyRequest } from './../types/types';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Req,
-  Res,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, Delete } from '@nestjs/common';
 import { ApiCookieAuth, ApiBearerAuth } from '@nestjs/swagger';
 import { Response } from 'express';
 import { cookieId } from './../constants';
@@ -47,10 +39,13 @@ export class AuthController {
         ),
       };
     }
-    throw new BadRequestException({
-      field: 'refresh token',
-      error: 'not found',
-    });
+    // throw new BadRequestException({
+    //   field: 'refresh token',
+    //   error: 'not found',
+    // });
+    return {
+      accessToken: '',
+    };
   }
 
   @Delete('/logout')

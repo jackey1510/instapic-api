@@ -14,6 +14,7 @@ import {
 // import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { Public } from 'src/auth/auth.decorator';
 import { ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { UserDto } from './dtos/user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -32,7 +33,7 @@ export class UsersController {
   @Public()
   @Post('register')
   @ApiCreatedResponse()
-  register(@Body() createUserDto: createUserDto) {
+  register(@Body() createUserDto: createUserDto): Promise<UserDto> {
     console.log(createUserDto);
     return this.userService.createOne(createUserDto);
   }

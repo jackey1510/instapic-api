@@ -1,10 +1,11 @@
-import { registerResponseDto, userError } from './dtos/register-response.dto';
+import { userError } from './dtos/register-response.dto';
 import { createUserDto } from './dtos/create-user.dto';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import argon2 from 'argon2';
 import pwValidator from 'password-validator';
+import { UserDto } from './dtos/user.dto';
 
 // This should be a real class/interface representing a user entity
 // export type User = any;
@@ -23,7 +24,7 @@ export class UsersService {
       where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
     });
   }
-  async createOne(createUserDto: createUserDto): Promise<registerResponseDto> {
+  async createOne(createUserDto: createUserDto): Promise<UserDto> {
     const { username, password, email } = createUserDto;
 
     const existingUser = await this.userRepository.findOne({
@@ -55,10 +56,14 @@ export class UsersService {
       email: email.toLowerCase(),
       password: hashedPassword,
     });
-    console.log(newUser);
+
     await this.userRepository.save(newUser);
 
-    return { user: newUser };
+    return {
+      email: newUser.email,
+      bio: newUser.bio,
+      username: newUser.username,
+    };
   }
 
   private validateRegister(user: createUserDto) {

@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { APP_GUARD } from '@nestjs/core';
 import { PostsModule } from './posts/posts.module';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PostsModule } from './posts/posts.module';
     ConfigModule.forRoot(),
     DatabaseModule,
     PostsModule,
+    UtilModule,
   ],
   controllers: [],
   providers: [

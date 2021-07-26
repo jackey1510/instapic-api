@@ -3,7 +3,6 @@ import { loginDto } from './dtos/login.dto';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import {
   Injectable,
-  UnauthorizedException,
   NotFoundException,
   BadRequestException,
   Inject,
@@ -73,22 +72,24 @@ export class AuthService {
       token: refreshToken,
     });
     if (!tokenInDB) {
-      throw new UnauthorizedException([
-        {
-          field: 'refresh token',
-          error: 'token is invalid',
-        },
-      ]);
+      //   throw new UnauthorizedException([
+      //     {
+      //       field: 'refresh token',
+      //       error: 'token is invalid',
+      //     },
+      //   ]);
+      return '';
     }
 
     const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     if (!payload) {
-      throw new UnauthorizedException([
-        {
-          field: 'refresh token',
-          error: 'token is invalid',
-        },
-      ]);
+      return '';
+      //   throw new UnauthorizedException([
+      //     {
+      //       field: 'refresh token',
+      //       error: 'token is invalid',
+      //     },
+      //   ]);
     }
 
     return this.jwtService.sign({

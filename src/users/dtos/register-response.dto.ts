@@ -1,6 +1,6 @@
-import { User } from '../entities/users.entity';
+import { UserDto } from './user.dto';
 export class registerResponseDto {
-  user?: User;
+  user?: UserDto;
   errors?: userError[];
 }
 
