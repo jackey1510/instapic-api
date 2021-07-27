@@ -51,7 +51,6 @@ export class AuthService {
       user.password,
       loginDto.password,
     );
-    console.log(correctPassword);
     if (!correctPassword) {
       throw new BadRequestException([
         {
@@ -72,24 +71,12 @@ export class AuthService {
       token: refreshToken,
     });
     if (!tokenInDB) {
-      //   throw new UnauthorizedException([
-      //     {
-      //       field: 'refresh token',
-      //       error: 'token is invalid',
-      //     },
-      //   ]);
       return '';
     }
 
     const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     if (!payload) {
       return '';
-      //   throw new UnauthorizedException([
-      //     {
-      //       field: 'refresh token',
-      //       error: 'token is invalid',
-      //     },
-      //   ]);
     }
 
     return this.jwtService.sign({

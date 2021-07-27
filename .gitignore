@@ -34,11 +34,8 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
-
 .env.production
-
 ormconfig.json
-
 gcp_keys.json
 
 

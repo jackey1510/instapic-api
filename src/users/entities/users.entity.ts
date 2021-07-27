@@ -1,6 +1,13 @@
 import { Post } from './../../posts/entities/post.entity';
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -33,4 +40,10 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Promise<Post[]>;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
