@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   RelationId,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Length } from 'class-validator';
@@ -29,4 +31,13 @@ export class Post {
 
   @Column()
   fileName: string;
+
+  @Column({ default: true })
+  public: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

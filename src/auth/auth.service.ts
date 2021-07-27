@@ -71,12 +71,6 @@ export class AuthService {
       token: refreshToken,
     });
     if (!tokenInDB) {
-      //   throw new UnauthorizedException([
-      //     {
-      //       field: 'refresh token',
-      //       error: 'token is invalid',
-      //     },
-      //   ]);
       return '';
     }
 
