@@ -1,20 +1,13 @@
-import { getProfileDto } from './dtos/getProfile.dto';
+import { getProfileDto } from './dtos/request/getProfile.dto';
 import { MyRequest } from './../types/types';
 import { UsersService } from './users.service';
-import { createUserDto } from './dtos/create-user.dto';
+import { createUserDto } from './dtos/request/create-user.dto';
 
-import {
-  Controller,
-  //   UseGuards,
-  Get,
-  Request,
-  Post,
-  Body,
-} from '@nestjs/common';
-// import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { Controller, Get, Request, Post, Body } from '@nestjs/common';
+
 import { Public } from 'src/auth/auth.decorator';
 import { ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { UserDto } from './dtos/user.dto';
+import { UserDto } from './dtos/response/user.dto';
 
 @Controller('users')
 export class UsersController {

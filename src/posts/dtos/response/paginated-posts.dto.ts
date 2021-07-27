@@ -1,6 +1,6 @@
-import { Post } from 'src/posts/entities/post.entity';
+import { PostDto } from './post.dto';
 
 export class PaginatedPostsDto {
-  posts: Post[];
+  posts: PostDto[];
   hasNext: boolean;
 }

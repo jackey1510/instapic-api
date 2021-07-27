@@ -1,5 +1,5 @@
 import { RefreshToken } from './entities/refresh-token.entity';
-import { loginDto } from './dtos/login.dto';
+import { loginDto } from './dtos/request/login.dto';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import {
   Injectable,

@@ -1,11 +1,11 @@
-import { userError } from './dtos/register-response.dto';
-import { createUserDto } from './dtos/create-user.dto';
+import { userError } from './dtos/response/register-response.dto';
+import { createUserDto } from './dtos/request/create-user.dto';
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import argon2 from 'argon2';
 import pwValidator from 'password-validator';
-import { UserDto } from './dtos/user.dto';
+import { UserDto } from './dtos/response/user.dto';
 
 // This should be a real class/interface representing a user entity
 // export type User = any;
@@ -67,7 +67,7 @@ export class UsersService {
   }
 
   private validateRegister(user: createUserDto) {
-    const { username, email, password } = user;
+    const { username, email, password, passwordConfirm } = user;
     const errors: userError[] = [];
     const emailRegex =
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -77,6 +77,12 @@ export class UsersService {
     if (!emailRegex.test(email)) {
       errors.push({ field: 'email', error: 'Email is not valid' });
       // throw new BadRequestException();
+    }
+    if (password !== passwordConfirm) {
+      errors.push({
+        field: 'passwordConfirm',
+        error: 'Password and password confirm do not match',
+      });
     }
     const passwordSchema = new pwValidator();
     passwordSchema

@@ -1,3 +1,4 @@
+import { maxPostPerRequest } from './../constants';
 import { Inject, Injectable } from '@nestjs/common';
 import { UtilService } from 'src/util/util.service';
 import { Repository } from 'typeorm';
@@ -7,6 +8,7 @@ import { getPostsDto } from './dtos/request/get-posts.dto';
 import { createPostResponseDto } from './dtos/response/create-post-response.dto';
 import { PaginatedPostsDto } from './dtos/response/paginated-posts.dto';
 import { Post } from './entities/post.entity';
+import { PostDto } from './dtos/response/post.dto';
 
 @Injectable()
 export class PostsService {
@@ -44,14 +46,16 @@ export class PostsService {
     getPostDto: getPostsDto,
     userId?: string,
   ): Promise<PaginatedPostsDto> {
-    const { limit, cursor } = getPostDto;
-    const realLimit = Math.min(50, limit) + 1;
+    let { limit, cursor } = getPostDto;
+    if (!limit) limit = 9;
+    // Real limit is 50, user cannot get more than 50 per request
+    const realLimit = Math.min(maxPostPerRequest, limit) + 1;
     let varNo = 2;
     const queryString = `
-	  SELECT p."fileName", p.text, u.username FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId") WHERE p.public = true 
+	  SELECT p."fileName", p.text, u.username, p."createdAt", p."updatedAt" FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId") WHERE p.public = true 
 	  ${userId ? ` OR p."userId" = $${varNo++}` : ''}
 	  ${cursor ? `WHERE p."createdAt" < $${varNo} ` : ''}
-	  order by p."createdAt" DESC limit $1;
+	  order by p."createdAt" DESC limit $1 ;
 	`;
     let values: any[] = [realLimit];
 
@@ -62,7 +66,14 @@ export class PostsService {
       values.push(cursor);
     }
 
-    const posts = await this.postRepository.query(queryString, values);
-    return { posts, hasNext: false };
+    const posts: PostDto[] = await this.postRepository.query(
+      queryString,
+      values,
+    );
+    let hasNext = false;
+    if (posts.length === realLimit) {
+      hasNext = true;
+    }
+    return { posts: posts.slice(0, limit), hasNext: hasNext };
   }
 }

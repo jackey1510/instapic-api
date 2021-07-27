@@ -6,8 +6,8 @@ import { cookieId } from './../constants';
 import { Public } from './auth.decorator';
 // import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { accessTokenDto } from './dtos/access_token.dto';
-import { loginDto } from './dtos/login.dto';
+import { accessTokenDto } from './dtos/response/access_token.dto';
+import { loginDto } from './dtos/request/login.dto';
 
 @Controller('auth')
 export class AuthController {
