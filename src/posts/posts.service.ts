@@ -50,11 +50,12 @@ export class PostsService {
     if (!limit) limit = 9;
     // Real limit is 50, user cannot get more than 50 per request
     const realLimit = Math.min(maxPostPerRequest, limit) + 1;
+    console.log(realLimit);
     let varNo = 2;
     const queryString = `
 	  SELECT p."fileName", p.text, u.username, p."createdAt", p."updatedAt" FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId") WHERE p.public = true 
 	  ${userId ? ` OR p."userId" = $${varNo++}` : ''}
-	  ${cursor ? `WHERE p."createdAt" < $${varNo} ` : ''}
+	  ${cursor ? `and p."createdAt" < $${varNo} ` : ''}
 	  order by p."createdAt" DESC limit $1 ;
 	`;
     let values: any[] = [realLimit];
@@ -63,17 +64,18 @@ export class PostsService {
       values.push(userId);
     }
     if (cursor) {
-      values.push(cursor);
+      values.push(new Date(cursor));
     }
 
     const posts: PostDto[] = await this.postRepository.query(
       queryString,
       values,
     );
-    let hasNext = false;
+    let nextCursor: Date | null = null;
+    console.log(posts);
     if (posts.length === realLimit) {
-      hasNext = true;
+      nextCursor = posts[posts.length - 2].createdAt;
     }
-    return { posts: posts.slice(0, limit), hasNext: hasNext };
+    return { posts: posts.slice(0, limit), nextCursor };
   }
 }

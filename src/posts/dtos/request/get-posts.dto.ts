@@ -1,4 +1,4 @@
 export class getPostsDto {
   limit: number;
-  cursor?: Date;
+  cursor?: string;
 }

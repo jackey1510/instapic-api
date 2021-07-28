@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+
 import { Public } from 'src/auth/auth.decorator';
 import { MyRequest } from 'src/types/types';
 import { createPostDto } from './dtos/request/create-post.dto';
@@ -24,10 +25,10 @@ export class PostsController {
   @Public()
   @Get('/')
   async getPosts(
-    @Req() { user }: MyRequest,
-    @Body() getPostsDto: getPostsDto,
+    @Req() request: MyRequest,
+    @Query() getPostsDto: getPostsDto,
   ): Promise<PaginatedPostsDto> {
-    const userId = user?.userId;
+    const userId = request.user?.userId;
     return this.postsService.getPosts(getPostsDto, userId);
   }
 }

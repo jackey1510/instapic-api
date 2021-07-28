@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import 'dotenv-safe/config';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import { cookieId, __prod__ } from './constants';
 // import { createConnection } from 'typeorm';
 
 async function bootstrap() {
@@ -14,6 +16,21 @@ async function bootstrap() {
     },
   });
   app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(
+    session({
+      name: cookieId,
+      saveUninitialized: false,
+      secret: process.env.COOKIE_SECRET,
+      resave: false,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+        httpOnly: true,
+        secure: __prod__,
+        sameSite: 'lax',
+        // domain: __prod__ ? "" : undefined,
+      },
+    }),
+  );
 
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
