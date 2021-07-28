@@ -4,8 +4,8 @@ import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import {
   Injectable,
   NotFoundException,
-  BadRequestException,
   Inject,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -52,7 +52,7 @@ export class AuthService {
       loginDto.password,
     );
     if (!correctPassword) {
-      throw new BadRequestException([
+      throw new UnprocessableEntityException([
         {
           field: 'password',
           error: 'password is incorrect',
@@ -87,13 +87,6 @@ export class AuthService {
       console.log(err);
       return '';
     }
-
-    //   throw new UnauthorizedException([
-    //     {
-    //       field: 'refresh token',
-    //       error: 'token is invalid',
-    //     },
-    //   ]);
   }
 
   private async genRefreshToken(payload: userPayload) {

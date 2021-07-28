@@ -1,6 +1,10 @@
 import { userError } from './dtos/response/register-response.dto';
 import { createUserDto } from './dtos/request/create-user.dto';
-import { Inject, Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import argon2 from 'argon2';
@@ -36,7 +40,7 @@ export class UsersService {
 
     if (existingUser) {
       console.log('User exist', existingUser);
-      throw new BadRequestException([
+      throw new UnprocessableEntityException([
         {
           field: 'username',
           error: 'Username or email is taken',
@@ -106,7 +110,7 @@ export class UsersService {
     }
 
     if (errors.length > 0) {
-      throw new BadRequestException(errors);
+      throw new UnprocessableEntityException(errors);
     }
   }
 }
