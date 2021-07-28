@@ -11,9 +11,6 @@ import argon2 from 'argon2';
 import pwValidator from 'password-validator';
 import { UserDto } from './dtos/response/user.dto';
 
-// This should be a real class/interface representing a user entity
-// export type User = any;
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -80,7 +77,6 @@ export class UsersService {
     }
     if (!emailRegex.test(email)) {
       errors.push({ field: 'email', error: 'Email is not valid' });
-      // throw new BadRequestException();
     }
     if (password !== passwordConfirm) {
       errors.push({
