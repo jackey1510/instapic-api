@@ -5,7 +5,7 @@ import { createUserDto } from './dtos/request/create-user.dto';
 
 import { Controller, Get, Request, Post, Body } from '@nestjs/common';
 
-import { Public } from 'src/auth/auth.decorator';
+import { Public } from '../auth/auth.decorator';
 import { ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { UserDto } from './dtos/response/user.dto';
 

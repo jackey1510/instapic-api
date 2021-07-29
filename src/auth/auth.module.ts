@@ -1,4 +1,4 @@
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../database/database.module';
 import { refreshTokenProviders } from './refresh-token.provider';
 import { accessTokenExpireTime } from './../constants';
 import { AuthController } from './auth.controller';

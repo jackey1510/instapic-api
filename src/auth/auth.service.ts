@@ -1,3 +1,4 @@
+import { validatedUserDto } from './dtos/response/validatedUser.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { loginDto } from './dtos/request/login.dto';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
@@ -22,7 +23,10 @@ export class AuthService {
     private refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 
-  async validateUser(usernameOrEmail: string, password: string): Promise<any> {
+  async validateUser(
+    usernameOrEmail: string,
+    password: string,
+  ): Promise<null | validatedUserDto> {
     const user = await this.usersService.findOneByUsernameOrEmail(
       usernameOrEmail,
     );
@@ -30,7 +34,7 @@ export class AuthService {
     if (!user) return null;
     const validPassword = await argon2.verify(user.password, password);
     if (validPassword) {
-      const { password, ...result } = user;
+      const { password, refreshTokens, posts, ...result } = user;
       return result;
     }
     return null;

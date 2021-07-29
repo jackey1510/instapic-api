@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 
-import { Public } from 'src/auth/auth.decorator';
-import { MyRequest } from 'src/types/types';
+import { Public } from '../auth/auth.decorator';
+import { MyRequest } from '../types/types';
 import { createPostDto } from './dtos/request/create-post.dto';
 import { getPostsDto } from './dtos/request/get-posts.dto';
 import { createPostResponseDto } from './dtos/response/create-post-response.dto';

@@ -4,7 +4,7 @@ import { PostsController } from './posts.controller';
 import { DatabaseModule } from '../database/database.module';
 import { postProviders } from './posts.provider';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { UtilService } from 'src/util/util.service';
+import { UtilService } from '../util/util.service';
 
 @Module({
   providers: [PostsService, JwtAuthGuard, ...postProviders, UtilService],

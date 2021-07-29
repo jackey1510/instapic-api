@@ -1,3 +1,4 @@
+import 'dotenv-safe/config';
 import { Storage } from '@google-cloud/storage';
 
 export const GCP_Storage = new Storage();

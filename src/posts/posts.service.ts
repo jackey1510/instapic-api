@@ -3,7 +3,7 @@ import {
   Injectable,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { UtilService } from 'src/util/util.service';
+import { UtilService } from '../util/util.service';
 import { Repository } from 'typeorm';
 import { maxPostPerRequest } from './../constants';
 import { createPostDto } from './dtos/request/create-post.dto';
