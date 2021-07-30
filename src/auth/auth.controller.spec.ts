@@ -1,3 +1,4 @@
+import { mockUser1 } from './../mocks/data/users.data.mock';
 // import { UsersModule } from './../users/users.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
@@ -7,11 +8,9 @@ import { accessTokenExpireTime, cookieId } from '../constants';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { validatedUserDto } from './dtos/response/validatedUser.dto';
-
-import { MockDatabaseModule } from '../mocks/database/module/database.module.mock';
-import { MockUsersModule } from '../mocks/database/module/users.module.mock';
-import { mockRefreshTokenProviders } from '../mocks/database/provider/refreshToken.provider.mock';
+import { MockDatabaseModule } from '../mocks/module/database.module.mock';
+import { MockUsersModule } from '../mocks/module/users.module.mock';
+import { mockRefreshTokenProviders } from '../mocks/provider/refreshToken.provider.mock';
 import { getMockRes, getMockReq } from '@jest-mock/express';
 import { verify, sign } from 'jsonwebtoken';
 import { JwtUserPayload, MyRequest } from '../types/types';
@@ -51,28 +50,19 @@ describe('AuthController', () => {
   describe('login', () => {
     const mockRes = getMockRes().res;
     it('should return access token', async () => {
-      const email = 'abc@email.com';
-      const username = 'abc';
-      const password = 'Abc12345';
-      const result: validatedUserDto = {
-        bio: 'bio',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        email,
-        username,
-        id: '39c4af0c-d325-4453-b7dc-88b45d0d67f5',
-      };
+      const mockUser = await mockUser1();
+      const { password, refreshTokens, posts, ...result } = mockUser;
       jest
         .spyOn(service, 'validateUser')
         .mockImplementation(async () => result);
       const res = await controller.login(
-        { usernameOrEmail: email, password },
+        { usernameOrEmail: mockUser.email, password },
         mockRes,
       );
       expect(res).toBeDefined();
       const payload = verify(res.accessToken, process.env.ACCESS_TOKEN_SECRET);
 
-      expect((payload as JwtUserPayload).username).toEqual(username);
+      expect((payload as JwtUserPayload).username).toEqual(mockUser.username);
     });
   });
 
@@ -85,9 +75,10 @@ describe('AuthController', () => {
       };
 
       const res = getMockRes().res;
-      await controller.logout(res, req).catch((err) => {
+      const result = await controller.logout(res, req).catch((err) => {
         expect(err).toBeUndefined();
       });
+      expect(result).toEqual(true);
     });
   });
 
@@ -115,7 +106,7 @@ describe('AuthController', () => {
         expect(err).toBeUndefined();
       });
 
-      expect(res!.accessToken).toBeDefined();
+      expect(res ? res.accessToken : res).toBeDefined();
       if (res) {
         const payload = verify(
           res.accessToken,

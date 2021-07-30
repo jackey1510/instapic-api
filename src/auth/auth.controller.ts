@@ -49,7 +49,7 @@ export class AuthController {
   async logout(
     @Res() response: Response,
     @Req() request: MyRequest,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const cookies = request.cookies;
     console.log(request.user);
     if (cookies && cookies[cookieId]) {
@@ -59,7 +59,7 @@ export class AuthController {
       );
       response.clearCookie(cookieId);
     }
-    response.status(204).send('true');
-    return;
+    response.status(204).send('ok');
+    return true;
   }
 }
