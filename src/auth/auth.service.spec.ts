@@ -10,11 +10,12 @@ import { PassportModule } from '@nestjs/passport';
 import { DatabaseModule } from '../database/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { accessTokenExpireTime } from '../constants';
+import { validatedUserDto } from './dtos/response/validatedUser.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -40,23 +41,22 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
-  // describe('validateUser', () => {
-  //   it('should return user info', async () => {
-  //     const email = 'abc@email.com';
-  //     const password = 'Abc12345';
-  //     const result: validatedUserDto = {
-  //       bio: 'bio',
-  //       createdAt: new Date(),
-  //       updatedAt: new Date(),
-  //       email,
-  //       username: 'abc',
-  //       id: '39c4af0c-d325-4453-b7dc-88b45d0d67f5',
-  //     };
-  //     jest
-  //       .spyOn(service, 'validateUser')
-  //       .mockImplementation(async () => result);
-
-  //     expect(await service.validateUser(email, password)).toBe(result);
-  //   });
-  // });
+  describe('validateUser', () => {
+    it('should return user info', async () => {
+      const email = 'abc@email.com';
+      const password = 'Abc12345';
+      const result: validatedUserDto = {
+        bio: 'bio',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        email,
+        username: 'abc',
+        id: '39c4af0c-d325-4453-b7dc-88b45d0d67f5',
+      };
+      jest
+        .spyOn(service, 'validateUser')
+        .mockImplementation(async () => result);
+      expect(await service.validateUser(email, password)).toBe(result);
+    });
+  });
 });

@@ -30,7 +30,6 @@ export class AuthService {
     const user = await this.usersService.findOneByUsernameOrEmail(
       usernameOrEmail,
     );
-    console.log('user', user);
     if (!user) return null;
     const validPassword = await argon2.verify(user.password, password);
     if (validPassword) {

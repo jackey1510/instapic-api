@@ -39,10 +39,6 @@ export class AuthController {
         ),
       };
     }
-    // throw new BadRequestException({
-    //   field: 'refresh token',
-    //   error: 'not found',
-    // });
     return {
       accessToken: '',
     };
