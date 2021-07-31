@@ -6,7 +6,7 @@ const userRepository = new MockRepository<User>();
 userRepository.findOne = async (params: {
   where: [{ username: string }, { email: string }];
 }) => {
-  const mockUser = await mockUser1();
+  const mockUser = mockUser1();
   if (
     params.where[0].username === mockUser.username ||
     params.where[1].email === mockUser.email

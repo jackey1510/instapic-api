@@ -32,7 +32,7 @@ describe('PostsController', () => {
       imports: [MockDatabaseModule, MockUtilModule],
     }).compile();
 
-    mockUser = await mockUser1();
+    mockUser = mockUser1();
     req.user = {
       userId: mockUser.id,
       username: mockUser.username,
@@ -76,7 +76,7 @@ describe('PostsController', () => {
       const params: getPostsDto = {
         limit: 9,
       };
-      const mockPostList = await mockPosts();
+      const mockPostList = mockPosts();
 
       const posts: PostDto[] = [];
 

@@ -23,7 +23,7 @@ describe('PostsService', () => {
       providers: [PostsService, JwtAuthGuard, ...mockPostProviders],
       imports: [MockDatabaseModule, MockUtilModule],
     }).compile();
-    mockUser = await mockUser1();
+    mockUser = mockUser1();
     userId = mockUser.id;
 
     service = module.get<PostsService>(PostsService);
@@ -64,13 +64,13 @@ describe('PostsService', () => {
   describe('get posts', () => {
     let mockPostList: PostDto[];
     beforeAll(async () => {
-      mockPostList = await mockPostsDto();
+      mockPostList = mockPostsDto();
     });
     const params: getPostsDto = {
       limit: 1,
     };
     it('returns paginated posts', async () => {
-      const mockPostList = await mockPostsDto();
+      const mockPostList = mockPostsDto();
 
       let nextCursor = mockPostList[mockPostList.length - 1].createdAt;
 

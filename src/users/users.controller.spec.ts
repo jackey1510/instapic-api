@@ -54,7 +54,7 @@ describe('UsersController', () => {
 
   describe('profile', () => {
     it('returns a profile', async () => {
-      const mockUser = await mockUser1();
+      const mockUser = mockUser1();
       const req: MyRequest = getMockReq();
       req.user = {
         userId: mockUser.id,

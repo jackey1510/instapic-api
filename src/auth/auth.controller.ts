@@ -51,11 +51,10 @@ export class AuthController {
     @Req() request: MyRequest,
   ): Promise<boolean> {
     const cookies = request.cookies;
-    console.log(request.user);
     if (cookies && cookies[cookieId]) {
       await this.authService.revokeRefreshToken(
         cookies[cookieId],
-        request.user.userId,
+        request.user.userId!,
       );
       response.clearCookie(cookieId);
     }

@@ -4,7 +4,7 @@ import { MockRepository } from '../repository/repository.mock';
 
 const mockRefreshTokenRepository = new MockRepository();
 mockRefreshTokenRepository.findOne = async (param: { token: string }) => {
-  const mockToken = await mockRefreshToken();
+  const mockToken = mockRefreshToken();
   if (param.token === mockToken) {
     return mockToken;
   }

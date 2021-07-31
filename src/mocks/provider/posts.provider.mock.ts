@@ -4,7 +4,7 @@ import { Post } from '../../posts/entities/post.entity';
 
 const postRepository = new MockRepository<Post>();
 postRepository.query = async (_queryString: string, _values?: any[]) => {
-  return await mockPostsDto();
+  return mockPostsDto();
 };
 export const mockPostProviders = [
   {

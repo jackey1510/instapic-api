@@ -6,8 +6,7 @@ import {
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
-import { verify, sign } from 'jsonwebtoken';
-import { JwtUserPayload } from 'src/types/types';
+import { verify, sign, JwtPayload } from 'jsonwebtoken';
 import { accessTokenExpireTime } from '../constants';
 import { mockUser1 } from '../mocks/data/users.data.mock';
 import { MockDatabaseModule } from '../mocks/module/database.module.mock';
@@ -44,7 +43,7 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should return user info', async () => {
-      const mockUser = await mockUser1();
+      const mockUser = mockUser1();
       const { password, refreshTokens, posts, ...result } = mockUser;
       expect(
         await service.validateUser(mockUser.email, mockUser1PlainPassword),
@@ -56,7 +55,7 @@ describe('AuthService', () => {
       );
     });
     it('should return null (Password incorrect)', async () => {
-      const mockUser = await mockUser1();
+      const mockUser = mockUser1();
       expect(
         await service.validateUser(mockUser.email, 'wrongpassword'),
       ).toEqual(null);
@@ -65,7 +64,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('returns access token and refresh token', async () => {
-      const mockUser = await mockUser1();
+      const mockUser = mockUser1();
       const loginDto: loginDto = {
         usernameOrEmail: mockUser.username,
         password: mockUser1PlainPassword,
@@ -78,10 +77,13 @@ describe('AuthService', () => {
       };
 
       // match access token payload
-      let { sub, username } = verify(
+
+      let payload = verify(
         res.accessToken,
         process.env.ACCESS_TOKEN_SECRET,
-      ) as JwtUserPayload;
+      ) as JwtPayload;
+
+      let { sub, username } = payload;
 
       expect({ sub, username }).toEqual(expectedPayload);
 
@@ -89,21 +91,21 @@ describe('AuthService', () => {
       let { sub: sub2, username: username2 } = verify(
         res.refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
-      ) as JwtUserPayload;
+      ) as JwtPayload;
       expect({ sub: sub2, username: username2 }).toEqual(expectedPayload);
     });
   });
 
   it('throws Not found Error', async () => {
     await service
-      .login({ usernameOrEmail: 'abcd', password: 'abc' })
+      .login({ usernameOrEmail: 'abcd', password: 'Abc12345' })
       .catch((err) => {
         expect(err).toBeInstanceOf(NotFoundException);
       });
   });
 
   it('throws unprocessable entity exception', async () => {
-    const mockUser = await mockUser1();
+    const mockUser = mockUser1();
     await service
       .login({ usernameOrEmail: mockUser.username, password: '' })
       .catch((err) => {
@@ -113,7 +115,7 @@ describe('AuthService', () => {
 
   describe('refreshAccessToken', () => {
     it('return a new access token', async () => {
-      const mockUser = await mockUser1();
+      const mockUser = mockUser1();
       const refreshToken = sign(
         { username: mockUser.username, sub: mockUser.id },
         process.env.REFRESH_TOKEN_SECRET,
@@ -123,8 +125,7 @@ describe('AuthService', () => {
         mockUser.id,
       );
       expect(
-        (verify(res, process.env.ACCESS_TOKEN_SECRET) as JwtUserPayload)
-          .username,
+        (verify(res, process.env.ACCESS_TOKEN_SECRET) as JwtPayload).username,
       ).toEqual(mockUser.username);
     });
     it('return a empty string (refresh token not found)', async () => {
@@ -140,7 +141,7 @@ describe('AuthService', () => {
 
   describe('revokeRefreshToken', () => {
     it('delete refresh token in db', async () => {
-      const mockToken = await mockRefreshToken();
+      const mockToken = mockRefreshToken();
       await service.revokeRefreshToken(mockToken, 'id').catch((err) => {
         expect(err).toBeUndefined();
       });

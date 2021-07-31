@@ -1,5 +1,7 @@
 export class MockRepository<T> {
-  public create(): void {}
+  public create(params: any): any {
+    return params;
+  }
   public async save(): Promise<void> {}
   public async remove(): Promise<void> {}
   public async findOne(_params: any): Promise<T | void> {}

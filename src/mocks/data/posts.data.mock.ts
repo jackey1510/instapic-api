@@ -5,8 +5,8 @@ import { Post } from '../../posts/entities/post.entity';
 import { mockBucketName } from '../mock_env';
 import { PostDto } from '../../posts/dtos/response/post.dto';
 
-export const mockPosts = async (): Promise<Post[]> => {
-  const mockUser = await mockUser1();
+export const mockPosts = (): Post[] => {
+  const mockUser = mockUser1();
   const fileType = 'png';
 
   const fileName = `${mockUser.id}/image.${fileType}`;
@@ -42,8 +42,8 @@ export const mockPosts = async (): Promise<Post[]> => {
   return [mockPost1, mockPost2];
 };
 
-export const mockPostsDto = async (): Promise<PostDto[]> => {
-  const mockUser = await mockUser1();
+export const mockPostsDto = (): PostDto[] => {
+  const mockUser = mockUser1();
   const fileType = 'png';
 
   const fileName = `${mockUser.id}/image.${fileType}`;
