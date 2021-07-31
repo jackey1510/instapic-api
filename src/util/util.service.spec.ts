@@ -1,3 +1,4 @@
+import { mockUtilProviders } from './../mocks/provider/util.provider.mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UtilService } from './util.service';
 
@@ -6,7 +7,7 @@ describe('UtilService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UtilService],
+      providers: [UtilService, ...mockUtilProviders],
     }).compile();
 
     service = module.get<UtilService>(UtilService);

@@ -14,11 +14,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(private reflector: Reflector) {
     super();
   }
-  // private refreshAccessToken(refreshToken: string) {
-  //   const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-  //   console.log(payload);
-  //   return sign(payload, process.env.ACCESS_TOKEN_SECRET);
-  // }
 
   handleRequest(err, user, _info: Error) {
     if (err || !user) {

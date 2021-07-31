@@ -1,9 +1,13 @@
 import { GetSignedUrlConfig } from '@google-cloud/storage';
-import { Injectable } from '@nestjs/common';
-import { GCP_Storage } from './config/gcp_storage';
+import { Injectable, Inject } from '@nestjs/common';
+import { Storage } from '@google-cloud/storage';
 
 @Injectable()
 export class UtilService {
+  constructor(
+    @Inject('GCP_STORAGE')
+    private readonly storage: Storage,
+  ) {}
   async generateV4UploadSignedUrl(fileName: string) {
     // Creates a client
     const bucketName = process.env.BUCKET_NAME!;
@@ -18,7 +22,8 @@ export class UtilService {
     };
 
     // Get a v4 signed URL for uploading file
-    const [url] = (await GCP_Storage.bucket(bucketName)
+    const [url] = (await this.storage
+      .bucket(bucketName)
       .file(fileName)
       .getSignedUrl(options)
       .catch((err: Error) => console.error(err))) || [''];

@@ -1,15 +1,15 @@
+import { UtilModule } from './../util/util.module';
 import { Module } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { DatabaseModule } from '../database/database.module';
 import { postProviders } from './posts.provider';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { UtilService } from '../util/util.service';
 
 @Module({
-  providers: [PostsService, JwtAuthGuard, ...postProviders, UtilService],
+  providers: [PostsService, JwtAuthGuard, ...postProviders],
   controllers: [PostsController],
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UtilModule],
   exports: [PostsService],
 })
 export class PostsModule {}

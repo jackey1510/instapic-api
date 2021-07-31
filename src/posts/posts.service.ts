@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UtilService } from '../util/util.service';
 import { Repository } from 'typeorm';
-import { maxPostPerRequest } from './../constants';
+import { maxPostPerRequest, gcp_storage_url } from './../constants';
 import { createPostDto } from './dtos/request/create-post.dto';
 import { getPostsDto } from './dtos/request/get-posts.dto';
 import { createPostResponseDto } from './dtos/response/create-post-response.dto';
@@ -38,7 +38,7 @@ export class PostsService {
     const signedUrl = await this.utilService.generateV4UploadSignedUrl(
       fileName,
     );
-    const photoUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${fileName}`;
+    const photoUrl = `${gcp_storage_url}/${process.env.BUCKET_NAME}/${fileName}`;
     await this.postRepository.insert({
       userId,
       fileName,

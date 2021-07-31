@@ -1,10 +1,9 @@
-import { JwtPayload } from 'jsonwebtoken';
 import { Request } from 'express';
 
 export type JwtUserPayload = {
-  userId: string;
-  username: string;
-} & JwtPayload;
+  userId?: string;
+  username?: string;
+};
 
 export type MyRequest = Request & {
   user: JwtUserPayload;

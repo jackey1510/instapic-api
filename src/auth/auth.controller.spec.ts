@@ -1,5 +1,4 @@
 import { mockUser1 } from './../mocks/data/users.data.mock';
-// import { UsersModule } from './../users/users.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';

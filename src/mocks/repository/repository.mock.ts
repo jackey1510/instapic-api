@@ -6,5 +6,5 @@ export class MockRepository<T> {
   public async find(): Promise<T[] | void> {}
   public async insert(): Promise<void> {}
   public async delete(): Promise<void> {}
-  public async query(): Promise<void> {}
+  public async query(_queryString: string, _value?: any[]): Promise<any> {}
 }
