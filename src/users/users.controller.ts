@@ -16,7 +16,7 @@ export class UsersController {
   @Get('profile')
   @ApiBearerAuth()
   async getProfile(@Request() req: MyRequest): Promise<getProfileDto> {
-    return this.userService.getProfile(req.user.userId!);
+    return this.userService.getProfile(req.user.username);
   }
 
   @Public()
