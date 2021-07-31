@@ -3,4 +3,5 @@ export class createUserDto {
   password: string;
   passwordConfirm: string;
   username: string;
+  bio?: string;
 }

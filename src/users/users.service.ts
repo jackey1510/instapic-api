@@ -4,12 +4,14 @@ import {
   Inject,
   Injectable,
   UnprocessableEntityException,
+  NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './entities/users.entity';
 import argon2 from 'argon2';
 import pwValidator from 'password-validator';
 import { UserDto } from './dtos/response/user.dto';
+import { getProfileDto } from './dtos/response/getProfile.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +19,20 @@ export class UsersService {
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<User>,
   ) {}
+
+  async getProfile(username: string): Promise<getProfileDto> {
+    const user = await this.findOneByUsernameOrEmail(username);
+    if (!user) {
+      throw new NotFoundException([
+        {
+          field: 'username',
+          error: 'not found',
+        },
+      ]);
+    }
+    const { password, id, refreshTokens, posts, ...values } = user!;
+    return values;
+  }
 
   async findOneByUsernameOrEmail(
     usernameOrEmail: string,
@@ -36,7 +52,6 @@ export class UsersService {
     });
 
     if (existingUser) {
-      console.log('User exist', existingUser);
       throw new UnprocessableEntityException([
         {
           field: 'username',

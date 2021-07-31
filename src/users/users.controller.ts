@@ -1,4 +1,4 @@
-import { getProfileDto } from './dtos/request/getProfile.dto';
+import { getProfileDto } from './dtos/response/getProfile.dto';
 import { MyRequest } from './../types/types';
 import { UsersService } from './users.service';
 import { createUserDto } from './dtos/request/create-user.dto';
@@ -16,18 +16,13 @@ export class UsersController {
   @Get('profile')
   @ApiBearerAuth()
   async getProfile(@Request() req: MyRequest): Promise<getProfileDto> {
-    const user = await this.userService.findOneByUsernameOrEmail(
-      req.user.username,
-    );
-    const { password, id, ...values } = user!;
-    return values;
+    return this.userService.getProfile(req.user.userId!);
   }
 
   @Public()
   @Post('register')
   @ApiCreatedResponse()
   register(@Body() createUserDto: createUserDto): Promise<UserDto> {
-    console.log(createUserDto);
     return this.userService.createOne(createUserDto);
   }
 }
