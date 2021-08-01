@@ -1,6 +1,6 @@
+import { mockAccessTokenSecrect } from './../src/mocks/mock_env';
 import { MockAppModule } from './../src/mocks/module/app.module.mock';
 import { sign } from 'jsonwebtoken';
-import 'dotenv-safe/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
@@ -30,7 +30,7 @@ describe('AppController (e2e)', () => {
           userId: mockUser.id,
           username: mockUser.username,
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        mockAccessTokenSecrect,
       );
 
       request(app.getHttpServer())

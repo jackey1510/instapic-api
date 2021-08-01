@@ -9,7 +9,7 @@ import { MockDatabaseModule } from './database.module.mock';
 import { accessTokenExpireTime } from '../../constants';
 import { AuthController } from '../../auth/auth.controller';
 import { AuthService } from '../../auth/auth.service';
-import { JwtStrategy } from '../../auth/strategies/jwt.strategy';
+import { MockJwtStrategy } from '../strategy/jwt.strategy.mock';
 @Module({
   imports: [
     MockUsersModule,
@@ -21,7 +21,7 @@ import { JwtStrategy } from '../../auth/strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, ...mockRefreshTokenProviders],
+  providers: [AuthService, MockJwtStrategy, ...mockRefreshTokenProviders],
   exports: [AuthService],
 })
 export class MockAuthModule {}
