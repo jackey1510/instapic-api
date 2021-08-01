@@ -1,8 +1,8 @@
 {
   "name": "instapic-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Api for photo sharing site",
+  "author": "Jackey Lau",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

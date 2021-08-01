@@ -7,12 +7,14 @@ import { getPostsDto } from './dtos/request/get-posts.dto';
 import { createPostResponseDto } from './dtos/response/create-post-response.dto';
 import { PaginatedPostsDto } from './dtos/response/paginated-posts.dto';
 import { PostsService } from './posts.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post('/')
+  @ApiBearerAuth()
   async createPost(
     @Req() req: MyRequest,
     @Body() createPostDto: createPostDto,
