@@ -1,24 +1,47 @@
+import { MockAppModule } from './../src/mocks/module/app.module.mock';
+import { sign } from 'jsonwebtoken';
+import 'dotenv-safe/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from './../src/app.module';
+
+import { mockUser1 } from '../src/mocks/data/users.data.mock';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [MockAppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  describe('/ (GET)', () => {
+    it('not authorized', () => {
+      return request(app.getHttpServer()).get('/').expect(401);
+    });
+    it('is Authorized', async () => {
+      const mockUser = mockUser1();
+      const accessToken = sign(
+        {
+          userId: mockUser.id,
+          username: mockUser.username,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+      );
+
+      request(app.getHttpServer())
+        .get('/')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect('Hello World!');
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

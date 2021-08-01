@@ -1,3 +1,5 @@
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
@@ -17,8 +19,9 @@ import { UtilModule } from './util/util.module';
     PostsModule,
     UtilModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
