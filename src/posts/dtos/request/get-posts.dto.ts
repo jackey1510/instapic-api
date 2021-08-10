@@ -1,4 +1,8 @@
+import { IsDateString, IsNumberString } from 'class-validator';
+
 export class getPostsDto {
-  limit: number;
+  @IsNumberString()
+  limit?: number;
+  @IsDateString()
   cursor?: string;
 }

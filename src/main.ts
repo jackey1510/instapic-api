@@ -32,7 +32,11 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      skipMissingProperties: true,
+    }),
+  );
   const config = new DocumentBuilder()
     .setTitle('Instapic API')
     .setDescription('The Instapic API description')
