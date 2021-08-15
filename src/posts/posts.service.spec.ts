@@ -1,4 +1,3 @@
-import { PostDto } from './../../../instapic-web/src/dto/response/post.dto';
 import { UnprocessableEntityException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
@@ -13,6 +12,7 @@ import { mockSignedUrl } from './../mocks/provider/util.provider.mock';
 import { createPostDto } from './dtos/request/create-post.dto';
 import { getPostsDto } from './dtos/request/get-posts.dto';
 import { PostsService } from './posts.service';
+import { PostDto } from './dtos/response/post.dto';
 
 describe('PostsService', () => {
   let service: PostsService;
