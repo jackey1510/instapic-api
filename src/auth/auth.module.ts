@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '../database/database.module';
 import { refreshTokenProviders } from './refresh-token.provider';
 import { accessTokenExpireTime } from './../constants';
@@ -20,7 +21,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, ...refreshTokenProviders],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    ConfigService,
+    ...refreshTokenProviders,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

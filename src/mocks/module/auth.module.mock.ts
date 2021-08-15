@@ -1,5 +1,5 @@
 import { mockRefreshTokenProviders } from './../provider/refreshToken.provider.mock';
-import { mockAccessTokenSecrect } from './../mock_env';
+import { mockAccessTokenSecret } from './../mock_env';
 
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,7 +16,7 @@ import { MockJwtStrategy } from '../strategy/jwt.strategy.mock';
     PassportModule,
     MockDatabaseModule,
     JwtModule.register({
-      secret: mockAccessTokenSecrect,
+      secret: mockAccessTokenSecret,
       signOptions: { expiresIn: accessTokenExpireTime },
     }),
   ],

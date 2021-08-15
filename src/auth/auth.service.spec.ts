@@ -16,17 +16,24 @@ import { mockUser1PlainPassword } from './../mocks/data/users.data.mock';
 import { AuthService } from './auth.service';
 import { loginDto } from './dtos/request/login.dto';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
   let service: AuthService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, JwtStrategy, ...mockRefreshTokenProviders],
+      providers: [
+        AuthService,
+        JwtStrategy,
+        ConfigService,
+        ...mockRefreshTokenProviders,
+      ],
       imports: [
         MockUsersModule,
         PassportModule,
         MockDatabaseModule,
+        ConfigModule.forRoot({ envFilePath: '.env.test' }),
         JwtModule.register({
           secret: process.env.ACCESS_TOKEN_SECRET,
           signOptions: { expiresIn: accessTokenExpireTime },
