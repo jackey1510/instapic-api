@@ -30,8 +30,8 @@ export class UsersService {
         },
       ]);
     }
-    const { password, id, refreshTokens, posts, ...values } = user!;
-    return values;
+    // const { password, id, refreshTokens, posts, ...values } = user;
+    return new getProfileDto(user);
   }
 
   async findOneByUsernameOrEmail(
