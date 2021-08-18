@@ -1,5 +1,8 @@
-import { __prod__ } from '../constants';
+import { __prod__, envPath } from '../constants';
 import { createConnection } from 'typeorm';
+import { config } from 'dotenv-safe';
+
+config({ path: envPath });
 
 export const databaseProviders = [
   {

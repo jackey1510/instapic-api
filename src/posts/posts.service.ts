@@ -12,6 +12,9 @@ import { createPostResponseDto } from './dtos/response/create-post-response.dto'
 import { PaginatedPostsDto } from './dtos/response/paginated-posts.dto';
 import { PostDto } from './dtos/response/post.dto';
 import { Post } from './entities/post.entity';
+import { config } from 'dotenv-safe';
+
+config();
 
 @Injectable()
 export class PostsService {

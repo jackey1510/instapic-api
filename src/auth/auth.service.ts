@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { validatedUserDto } from './dtos/response/validatedUser.dto';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { loginDto } from './dtos/request/login.dto';
@@ -16,12 +17,18 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
+  _refreshTokenSecret: string;
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     @Inject('REFRESH_TOKEN_REPOSITORY')
     private refreshTokenRepository: Repository<RefreshToken>,
-  ) {}
+    configService: ConfigService,
+  ) {
+    this._refreshTokenSecret = configService.get<string>(
+      'REFRESH_TOKEN_SECRET',
+    )!;
+  }
 
   async validateUser(
     usernameOrEmail: string,
@@ -63,6 +70,7 @@ export class AuthService {
       ]);
     }
     const payload = { username: user.username, sub: user.id };
+
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: await this.genRefreshToken(payload),
@@ -73,12 +81,13 @@ export class AuthService {
     const tokenInDB = await this.refreshTokenRepository.findOne({
       token: refreshToken,
     });
+
     if (!tokenInDB) {
       return '';
     }
 
     try {
-      const payload = verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      const payload = verify(refreshToken, this._refreshTokenSecret);
       if (!payload) {
         return '';
       }
@@ -93,7 +102,7 @@ export class AuthService {
   }
 
   private async genRefreshToken(payload: userPayload) {
-    const token = sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    const token = sign(payload, this._refreshTokenSecret, {
       expiresIn: refreshTokenExpireTime,
     });
     const exp = new Date();

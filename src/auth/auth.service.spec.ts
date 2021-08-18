@@ -1,3 +1,7 @@
+import {
+  mockAccessTokenSecret,
+  mockRefreshTokenSecret,
+} from './../mocks/mock_env';
 import { mockRefreshToken } from './../mocks/data/refreshToken.data.mock';
 import {
   NotFoundException,
@@ -34,9 +38,17 @@ describe('AuthService', () => {
         PassportModule,
         MockDatabaseModule,
         ConfigModule.forRoot({ envFilePath: '.env.test' }),
-        JwtModule.register({
-          secret: process.env.ACCESS_TOKEN_SECRET,
-          signOptions: { expiresIn: accessTokenExpireTime },
+        JwtModule.registerAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: async (configService: ConfigService) => {
+            return {
+              secretOrPrivateKey: configService.get<string>(
+                'ACCESS_TOKEN_SECRET',
+              ),
+              signOptions: { expiresIn: accessTokenExpireTime },
+            };
+          },
         }),
       ],
     }).compile();
@@ -64,7 +76,7 @@ describe('AuthService', () => {
     it('should return null (Password incorrect)', async () => {
       const mockUser = mockUser1();
       expect(
-        await service.validateUser(mockUser.email, 'wrongpassword'),
+        await service.validateUser(mockUser.email, 'wrongPassword'),
       ).toEqual(null);
     });
   });
@@ -87,7 +99,7 @@ describe('AuthService', () => {
 
       let payload = verify(
         res.accessToken,
-        process.env.ACCESS_TOKEN_SECRET,
+        mockAccessTokenSecret,
       ) as JwtPayload;
 
       let { sub, username } = payload;
@@ -97,7 +109,7 @@ describe('AuthService', () => {
       // match refresh token payload
       let { sub: sub2, username: username2 } = verify(
         res.refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
+        mockRefreshTokenSecret,
       ) as JwtPayload;
       expect({ sub: sub2, username: username2 }).toEqual(expectedPayload);
     });
@@ -123,16 +135,11 @@ describe('AuthService', () => {
   describe('refreshAccessToken', () => {
     it('return a new access token', async () => {
       const mockUser = mockUser1();
-      const refreshToken = sign(
-        { username: mockUser.username, sub: mockUser.id },
-        process.env.REFRESH_TOKEN_SECRET,
-      );
+      const refreshToken = mockRefreshToken();
       const res = await service.refreshAccessToken(refreshToken);
-      expect(verify(res, process.env.ACCESS_TOKEN_SECRET).sub).toEqual(
-        mockUser.id,
-      );
+      expect(verify(res, mockAccessTokenSecret).sub).toEqual(mockUser.id);
       expect(
-        (verify(res, process.env.ACCESS_TOKEN_SECRET) as JwtPayload).username,
+        (verify(res, mockAccessTokenSecret) as JwtPayload).username,
       ).toEqual(mockUser.username);
     });
     it('return a empty string (refresh token not found)', async () => {
