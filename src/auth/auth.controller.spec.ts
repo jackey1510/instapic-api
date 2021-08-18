@@ -101,13 +101,10 @@ describe('AuthController', () => {
 
       req.cookies[cookieId] = sign(
         { userId, username },
-        process.env.REFRESH_TOKEN_SECRET,
+        mockRefreshTokenSecret,
       );
 
-      const result = sign(
-        { userId, username },
-        process.env.ACCESS_TOKEN_SECRET,
-      );
+      const result = sign({ userId, username }, mockAccessTokenSecret);
 
       jest
         .spyOn(service, 'refreshAccessToken')
@@ -119,10 +116,7 @@ describe('AuthController', () => {
 
       expect(res ? res.accessToken : res).toBeDefined();
       if (res) {
-        const payload = verify(
-          res.accessToken,
-          process.env.ACCESS_TOKEN_SECRET,
-        );
+        const payload = verify(res.accessToken, mockAccessTokenSecret);
         expect((payload as JwtUserPayload).userId).toEqual('abc');
       }
     });

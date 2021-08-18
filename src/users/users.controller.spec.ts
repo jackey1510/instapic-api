@@ -1,5 +1,5 @@
 import { getMockReq } from '@jest-mock/express';
-import { MyRequest } from 'src/types/types';
+import { MyRequest } from '../types/types';
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';

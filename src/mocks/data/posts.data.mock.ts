@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/users.entity';
+import { User } from '../../users/entities/users.entity';
 import { gcp_storage_url } from './../../constants';
 import { mockUser1 } from '../../mocks/data/users.data.mock';
 import { Post } from '../../posts/entities/post.entity';
