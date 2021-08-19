@@ -15,6 +15,7 @@ async function bootstrap() {
       credentials: true,
     },
   });
+
   app.use(cookieParser(process.env.COOKIE_SECRET));
   app.use(
     session({
