@@ -12,7 +12,7 @@ const connectionConfig: ConnectionOptions = {
         socketPath: process.env.DB_HOST,
       }
     : undefined,
-  logging: !__prod__,
+  logging: true,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: false,
   migrations: [__dirname + '/migrations/*.js'],
@@ -24,7 +24,6 @@ export const databaseProviders = [
     provide: 'DATABASE_CONNECTION',
     useFactory: async () => {
       const conn = await createConnection(connectionConfig);
-      await conn.runMigrations();
       return conn;
     },
   },

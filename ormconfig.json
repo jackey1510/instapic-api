@@ -5,10 +5,5 @@
   "cli": {
     "migrationsDir": "src/migrations"
   },
-  "host": "",
-  "port": 5432,
-  "username": "",
-  "password": "",
-  "database": "",
   "synchronize": false
 }
