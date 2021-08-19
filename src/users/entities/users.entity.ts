@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { IsEmail, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -35,9 +36,11 @@ export class User {
   @Column({ length: 300, nullable: true })
   bio: string;
 
+  @Exclude()
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens: Promise<RefreshToken[]>;
 
+  @Exclude()
   @OneToMany(() => Post, (post) => post.user)
   posts: Promise<Post[]>;
 

@@ -1,5 +1,5 @@
 import { mockRefreshTokenProviders } from './../provider/refreshToken.provider.mock';
-import { mockAccessTokenSecrect } from './../mock_env';
+import { mockAccessTokenSecret } from './../mock_env';
 
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -10,18 +10,25 @@ import { accessTokenExpireTime } from '../../constants';
 import { AuthController } from '../../auth/auth.controller';
 import { AuthService } from '../../auth/auth.service';
 import { MockJwtStrategy } from '../strategy/jwt.strategy.mock';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 @Module({
   imports: [
     MockUsersModule,
     PassportModule,
     MockDatabaseModule,
     JwtModule.register({
-      secret: mockAccessTokenSecrect,
+      secret: mockAccessTokenSecret,
       signOptions: { expiresIn: accessTokenExpireTime },
     }),
+    ConfigModule.forRoot({ envFilePath: '.env.test' }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, MockJwtStrategy, ...mockRefreshTokenProviders],
+  providers: [
+    AuthService,
+    MockJwtStrategy,
+    ConfigService,
+    ...mockRefreshTokenProviders,
+  ],
   exports: [AuthService],
 })
 export class MockAuthModule {}

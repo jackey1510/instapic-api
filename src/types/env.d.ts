@@ -7,6 +7,5 @@ declare namespace NodeJS {
     COOKIE_SECRET: string;
     CORS_ORIGIN: string;
     BUCKET_NAME: string;
-    GOOGLE_APPLICATION_CREDENTIALS: string;
   }
 }

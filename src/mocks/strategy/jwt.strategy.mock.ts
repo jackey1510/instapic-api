@@ -1,4 +1,4 @@
-import { mockAccessTokenSecrect } from './../mock_env';
+import { mockAccessTokenSecret } from './../mock_env';
 import { JwtUserPayload } from './../../types/types';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
@@ -10,7 +10,7 @@ export class MockJwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: mockAccessTokenSecrect,
+      secretOrKey: mockAccessTokenSecret,
     });
   }
 

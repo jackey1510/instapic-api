@@ -64,6 +64,10 @@ $ yarn test:cov
 
 See the swagger hub at `{endpoint}/api`
 
+## Architecture
+
+![instapic](https://user-images.githubusercontent.com/20975443/129932345-e778dfdb-e0bc-4f49-bc74-2b234860e58f.jpeg)
+
 
 ## Lessons Learned
 

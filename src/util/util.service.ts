@@ -1,6 +1,10 @@
+import { envPath } from './../constants';
 import { GetSignedUrlConfig } from '@google-cloud/storage';
 import { Injectable, Inject } from '@nestjs/common';
 import { Storage } from '@google-cloud/storage';
+import { config } from 'dotenv-safe';
+
+config({ path: envPath });
 
 @Injectable()
 export class UtilService {

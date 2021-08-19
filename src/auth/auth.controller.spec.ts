@@ -1,3 +1,4 @@
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getMockReq, getMockRes } from '@jest-mock/express';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -10,8 +11,8 @@ import { mockRefreshTokenProviders } from '../mocks/provider/refreshToken.provid
 import { JwtUserPayload, MyRequest } from '../types/types';
 import { mockUser1 } from './../mocks/data/users.data.mock';
 import {
-  mockAccessTokenSecrect,
-  mockRefreshTokenSecrect,
+  mockAccessTokenSecret,
+  mockRefreshTokenSecret,
 } from './../mocks/mock_env';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -29,15 +30,17 @@ describe('AuthController', () => {
         LocalStrategy,
         JwtStrategy,
         ...mockRefreshTokenProviders,
+        ConfigService,
       ],
       imports: [
         MockUsersModule,
         PassportModule,
         MockDatabaseModule,
         JwtModule.register({
-          secret: process.env.ACCESS_TOKEN_SECRET,
+          secret: mockAccessTokenSecret,
           signOptions: { expiresIn: accessTokenExpireTime },
         }),
+        ConfigModule.forRoot({ envFilePath: '.env.test' }),
       ],
       controllers: [AuthController],
     }).compile();
@@ -60,8 +63,8 @@ describe('AuthController', () => {
       };
       jest.spyOn(service, 'login').mockImplementation(async () => {
         return {
-          accessToken: sign(jwtPayload, mockAccessTokenSecrect),
-          refreshToken: sign(jwtPayload, mockRefreshTokenSecrect),
+          accessToken: sign(jwtPayload, mockAccessTokenSecret),
+          refreshToken: sign(jwtPayload, mockRefreshTokenSecret),
         };
       });
       const res = await controller.login(
@@ -69,7 +72,7 @@ describe('AuthController', () => {
         mockRes,
       );
       expect(res).toBeDefined();
-      const payload = verify(res.accessToken, mockAccessTokenSecrect);
+      const payload = verify(res.accessToken, mockAccessTokenSecret);
       expect((payload as JwtUserPayload).username).toEqual(mockUser.username);
     });
   });
@@ -98,13 +101,10 @@ describe('AuthController', () => {
 
       req.cookies[cookieId] = sign(
         { userId, username },
-        process.env.REFRESH_TOKEN_SECRET,
+        mockRefreshTokenSecret,
       );
 
-      const result = sign(
-        { userId, username },
-        process.env.ACCESS_TOKEN_SECRET,
-      );
+      const result = sign({ userId, username }, mockAccessTokenSecret);
 
       jest
         .spyOn(service, 'refreshAccessToken')
@@ -116,10 +116,7 @@ describe('AuthController', () => {
 
       expect(res ? res.accessToken : res).toBeDefined();
       if (res) {
-        const payload = verify(
-          res.accessToken,
-          process.env.ACCESS_TOKEN_SECRET,
-        );
+        const payload = verify(res.accessToken, mockAccessTokenSecret);
         expect((payload as JwtUserPayload).userId).toEqual('abc');
       }
     });

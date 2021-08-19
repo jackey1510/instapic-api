@@ -1,6 +1,7 @@
-import 'dotenv-safe/config';
+import { envPath } from '../../constants';
+import { config } from 'dotenv-safe';
+config({ path: envPath });
 import { Storage } from '@google-cloud/storage';
-
 export const GCP_Storage = new Storage();
 
 async function configureBucketCors() {
