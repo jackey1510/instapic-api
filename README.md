@@ -62,7 +62,7 @@ $ yarn test:cov
   
 ## API Reference
 
-See the swagger hub at `{endpoint}/api`
+See the swagger hub at `{endpoint}/api` or https://instapic-api.jackeylau.com/api/
 
 ## Architecture
 
