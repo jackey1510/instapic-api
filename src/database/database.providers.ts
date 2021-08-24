@@ -2,7 +2,7 @@ import { __prod__ } from '../constants';
 import { createConnection, ConnectionOptions } from 'typeorm';
 import 'dotenv-safe/config';
 
-var connectionConfig: ConnectionOptions = {
+let connectionConfig: ConnectionOptions = {
   type: 'postgres',
   url: process.env.DATABASE_URL,
   logging: true,
@@ -33,7 +33,6 @@ export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION',
     useFactory: async () => {
-      console.log(connectionConfig);
       try {
         const conn = await createConnection(connectionConfig);
         return conn;
