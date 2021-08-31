@@ -6,9 +6,11 @@ import {
   RelationId,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { User } from '../../users/entities/users.entity';
 import { Length } from 'class-validator';
+import { Like } from './like.entity';
 
 @Entity()
 export class Post {
@@ -34,6 +36,9 @@ export class Post {
 
   @Column({ default: true })
   public: boolean;
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes: Promise<Like[]>;
 
   @CreateDateColumn()
   createdAt: Date;

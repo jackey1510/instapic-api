@@ -1,3 +1,4 @@
+import { Like } from './entities/like.entity';
 import {
   Inject,
   Injectable,
@@ -22,6 +23,8 @@ export class PostsService {
     @Inject('POST_REPOSITORY')
     private readonly postRepository: Repository<Post>,
     private readonly utilService: UtilService,
+    @Inject('LIKE_REPOSITORY')
+    private readonly likeRepository: Repository<Like>,
   ) {}
 
   async createPost(
@@ -65,12 +68,20 @@ export class PostsService {
     // Real limit is 50, user cannot get more than 50 per request
     const realLimit = Math.min(maxPostPerRequest, limit) + 1;
     let varNo = 2;
-    const queryString = `
-	  SELECT p."fileName", p.text, u.username, p."createdAt", p."updatedAt" FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId") WHERE p.public = true 
-	  ${userId ? ` OR p."userId" = $${varNo++}` : ''}
-	  ${cursor ? `and p."createdAt" < $${varNo} ` : ''}
-	  order by p."createdAt" DESC limit $1 ;
-	`;
+    // const queryString = `
+    // SELECT p."fileName", p.id,p.text, u.username, p."createdAt", p."updatedAt" FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId") WHERE p.public = true
+    // ${userId ? ` OR p."userId" = $${varNo++}` : ''}
+    // ${cursor ? `and p."createdAt" < $${varNo} ` : ''}
+    // order by p."createdAt" DESC limit $1`;
+
+    const queryString = `SELECT p."fileName", p.id,p.text, u.username, p."createdAt", p."updatedAt" , Count(l."postId") as likes FROM POST p INNER JOIN "public"."user" u ON (u.id = p."userId")
+     LEFT JOIN "public"."like" l on p.id = l."postId" GROUP BY p.id, u.id
+     ${userId ? ` OR p."userId" = $${varNo++}` : ''}
+     ${cursor ? `and p."createdAt" < $${varNo} ` : ''}
+     order by p."createdAt" DESC limit $1;
+   
+    `;
+
     let values: any[] = [realLimit];
 
     if (userId) {
@@ -89,5 +100,16 @@ export class PostsService {
       nextCursor = posts[posts.length - 2].createdAt;
     }
     return { posts: posts.slice(0, limit), nextCursor };
+  }
+
+  async likeOrUnlikePost(postId: string, userId: string) {
+    const liked = await this.likeRepository.findOne({ postId, userId });
+    if (liked) {
+      await this.likeRepository.remove(liked);
+      return true;
+    }
+    const newLike = new Like(postId, userId);
+    await this.likeRepository.save(newLike);
+    return true;
   }
 }

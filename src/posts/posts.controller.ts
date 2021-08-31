@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Param,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 
 import { Public } from '../auth/auth.decorator';
 import { MyRequest } from '../types/types';
@@ -32,5 +41,14 @@ export class PostsController {
   ): Promise<PaginatedPostsDto> {
     const userId = request.user?.userId;
     return this.postsService.getPosts(getPostsDto, userId);
+  }
+
+  @Post('/like/:id')
+  async likePost(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Req() request: MyRequest,
+  ) {
+    const userId = request.user.userId;
+    return this.postsService.likeOrUnlikePost(id, userId);
   }
 }

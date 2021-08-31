@@ -13,6 +13,7 @@ export const mockUser1 = () => {
     id: '39c4af0c-d325-4453-b7dc-88b45d0d67f5',
     refreshTokens: new Promise(() => []),
     posts: new Promise(() => []),
+    likes: new Promise(() => []),
   };
   return user;
 };

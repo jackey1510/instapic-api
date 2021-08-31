@@ -1,16 +1,17 @@
-import { Post } from './../../posts/entities/post.entity';
-import { RefreshToken } from '../../auth/entities/refresh-token.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { IsEmail, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
+import { IsEmail, Length } from 'class-validator';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { RefreshToken } from '../../auth/entities/refresh-token.entity';
+import { Like } from './../../posts/entities/like.entity';
+import { Post } from './../../posts/entities/post.entity';
 
 @Entity()
 export class User {
@@ -35,6 +36,9 @@ export class User {
   @ApiProperty()
   @Column({ length: 300, nullable: true })
   bio: string;
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Promise<Like[]>;
 
   @Exclude()
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)

@@ -1,3 +1,7 @@
+import { Post } from './../posts/entities/post.entity';
+import { User } from './../users/entities/users.entity';
+
+import { Like } from './../posts/entities/like.entity';
 import { __prod__ } from '../constants';
 import { createConnection, ConnectionOptions } from 'typeorm';
 import 'dotenv-safe/config';
@@ -7,9 +11,9 @@ let connectionConfig: ConnectionOptions = {
   url: process.env.DATABASE_URL,
   logging: true,
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: false,
+  synchronize: true,
   migrations: [__dirname + '/../migrations/*.js'],
-  migrationsRun: true,
+  // migrationsRun: true,
 };
 
 if (__prod__) {
@@ -22,10 +26,11 @@ if (__prod__) {
       socketPath: process.env.DB_HOST!,
     },
     logging: true,
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: false,
-    migrations: [__dirname + '/../migrations/*.js'],
-    migrationsRun: true,
+    // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    entities: [Like, Post, User],
+    synchronize: true,
+    // migrations: [__dirname + '/../migrations/*.js'],
+    // migrationsRun: false,
   };
 }
 

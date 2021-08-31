@@ -1,3 +1,4 @@
+import { Like } from './../../posts/entities/like.entity';
 import { User } from '../../users/entities/users.entity';
 import { gcp_storage_url } from './../../constants';
 import { mockUser1 } from '../../mocks/data/users.data.mock';
@@ -22,6 +23,7 @@ export const mockPosts = (): Post[] => {
     updatedAt: new Date('2021-01-01'),
     user: new Promise<User>(() => mockUser),
     userId: mockUser.id,
+    likes: new Promise<Like[]>(() => []),
   };
 
   const fileName2 = `${mockUser.id}/image.${fileType}`;
@@ -37,6 +39,7 @@ export const mockPosts = (): Post[] => {
     updatedAt: new Date('2021-01-01'),
     user: new Promise<User>(() => mockUser),
     userId: mockUser.id,
+    likes: new Promise(() => []),
   };
 
   return [mockPost1, mockPost2];
@@ -49,20 +52,24 @@ export const mockPostsDto = (): PostDto[] => {
   const fileName = `${mockUser.id}/image.${fileType}`;
 
   const mockPost1: PostDto = {
+    id: 'ifhsaif',
     createdAt: new Date('2021-01-01'),
     fileName,
     username: mockUser.username,
     text: 'hi',
+    likes: 0,
     updatedAt: new Date('2021-01-01'),
   };
 
   const fileName2 = `${mockUser.id}/image.${fileType}`;
 
   const mockPost2: PostDto = {
+    id: 'asdhihdais',
     createdAt: new Date('2021-01-01'),
     fileName: fileName2,
     username: mockUser.username,
     text: 'hi',
+    likes: 0,
     updatedAt: new Date('2021-01-01'),
   };
 
