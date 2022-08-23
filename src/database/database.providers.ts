@@ -10,6 +10,7 @@ let connectionConfig: ConnectionOptions = {
   synchronize: false,
   migrations: [__dirname + '/../migrations/*.js'],
   migrationsRun: true,
+  ssl: true,
 };
 
 if (__prod__) {
